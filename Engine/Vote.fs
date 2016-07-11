@@ -22,8 +22,8 @@ module Vote =
         votes: List<Vote>
     }
 
-    let new_election (entity :Engine.Music.MusicEntity) = 
-        {candidate = entity; votes = []}
+    let new_election (entity :Engine.Music.MusicEntity) (votes : List<Vote>)  = 
+        {candidate = entity; votes = votes}
 
     let vote_in_election (election: Election) (vote: Vote) = 
         {election with votes = vote::election.votes}
@@ -44,9 +44,5 @@ module Vote =
             | _ -> Success (election.candidate, weights)
 
 
-    let run_election (entity : MusicEntity) (votes : List<Vote>) (weights : UserWeights) = 
-        let election = 
-            new_election entity
-                |> (fun x -> {x with votes = votes})
-
+    let run_election (election: Election) (weights : UserWeights) = 
         election_result election weights

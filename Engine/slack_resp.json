@@ -1,0 +1,59 @@
+﻿
+{
+    "ok": true,
+    "messages": [
+        {
+            "type": "message",
+            "user": "U0KUC87A4",
+            "text": "Song - Jakes song",
+            "ts": "1468233942.000005",
+            "reactions": [
+                {
+                    "name": "disappointed",
+                    "users": [
+                        "U0KUC87A4"
+                    ],
+                    "count": 1
+                },
+                {
+                    "name": "open_mouth",
+                    "users": [
+                        "U0KUC87A4"
+                    ],
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "user": "U0KUC87A4",
+            "text": "Artist - Muse",
+            "ts": "1468232852.000004",
+            "reactions": [
+                {
+                    "name": "slightly_smiling_face",
+                    "users": [
+                        "U0KUC87A4"
+                    ],
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "user": "U04AWRADB",
+            "inviter": "U0KUC87A4",
+            "text": "<@U04AWRADB|jacob> has joined the channel",
+            "type": "message",
+            "subtype": "channel_join",
+            "ts": "1468232828.000003"
+        },
+        {
+            "user": "U0KUC87A4",
+            "text": "<@U0KUC87A4|jakecoltman> has joined the channel",
+            "type": "message",
+            "subtype": "channel_join",
+            "ts": "1468232827.000002"
+        }
+    ],
+    "has_more": false
+}
