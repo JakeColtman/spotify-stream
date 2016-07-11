@@ -22,6 +22,12 @@ module Vote =
         | Success of MusicEntity
         | Rejection
 
+    let create_election (entity :Engine.Music.MusicEntity) = 
+        {candidate = entity; votes = []}
+
+    let vote_in_election (election: Election) (vote: Vote) = 
+        {election with votes = vote::election.votes}
+
     let execute_election (election: Election) (weights : UserWeights) = 
         let summation = 
             election.votes
