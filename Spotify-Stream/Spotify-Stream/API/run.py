@@ -11,10 +11,12 @@ def add_song(song_name):
 
 @app.route("/tempo/increase", methods=["GET"])
 def increase_tempo():
+    session.increase_tempo()
     return "Tempo increased"
 
 @app.route("/tempo/decrease", methods=["GET"])
 def decrease_temp():
+    session.decrease_tempo()
     return "Tempo decreased"
 
 if __name__ == "__main__":

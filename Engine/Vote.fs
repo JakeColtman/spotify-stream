@@ -29,19 +29,32 @@ module Vote =
         {election with votes = vote::election.votes}
 
     let election_result (election: Election) (weights : UserWeights) = 
+
+        let new_users = 
+            election.votes
+                |> List.map(fun vote -> fst vote)
+                |> List.filter(fun user -> weights.ContainsKey user)
+                |> List.map(fun user -> user, 1.0)   
+            
+        let new_weights = 
+            weights 
+                |> Map.toList 
+                |> List.append new_users
+                |> Map.ofList
+
         let summation = 
             election.votes
             |> List.map (fun (x : Vote) -> 
                 match x with
-                    | user, InFavour -> weights.[user]
-                    | user, Opposed -> - weights.[user]
+                    | user, InFavour -> new_weights.[user]
+                    | user, Opposed -> - new_weights.[user]
                 )
             |> List.reduce (fun x y -> x + y)
 
 
         match summation with 
-            | i when i <= 0.0 -> Rejection weights
-            | _ -> Success (election.candidate, weights)
+            | i when i <= 0.0 -> Rejection new_weights
+            | _ -> Success (election.candidate, new_weights)
 
 
     let run_election (election: Election) (weights : UserWeights) = 
