@@ -1,6 +1,12 @@
 ﻿namespace Engine
 
-module Domain = 
+module Music = 
+
+    type Song = string
+    type Artist = string
+    type Album = string
+
+module Requests = 
 
     type SpecificRequest = 
         | Song of string
@@ -14,3 +20,4 @@ module Domain =
     type Request = 
         | SpecificRequest of SpecificRequest
         | ThemeRequest of ThemeRequest
+
