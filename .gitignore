@@ -243,3 +243,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+Spotify-Stream/Spotify-Stream/Engine/.cache-jakecoltman@sky.com
+Spotify-Stream/Spotify-Stream/Engine/keys.json
