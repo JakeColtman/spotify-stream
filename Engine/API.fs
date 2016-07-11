@@ -77,6 +77,9 @@ module API =
             | Prefix "Album" rest -> Some(Album "I'm an album")
             | Prefix "Song" rest -> Some(Song "I'm a song")
             | Prefix "Artist" rest -> Some(Artist "I'm an artist")
+            | Prefix "Tempo" rest -> match rest with 
+                                        | " increase" -> Some(Tempo Up)
+                                        | " decrease" -> Some(Tempo Down)
             | _ -> None
 
     let extract_votes (message : SlackHistory.Message) = 

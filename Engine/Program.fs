@@ -3,7 +3,7 @@
 open Engine.Vote
 open Engine.Music
 open Engine.API
-open Engine.PlayQueue
+open Engine.ExportAPI
 
 [<EntryPoint>]
 let main argv = 
@@ -17,7 +17,7 @@ let main argv =
         |> List.iter (fun x -> 
             let result = run_election x user_weights
             match result with 
-                | Success(entity , weight)-> playqueue.Post entity
+                | Success(entity , weight)-> export entity
                 | Rejection x -> ignore x
             )
 

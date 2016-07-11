@@ -57,9 +57,9 @@
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
     <Compile Include="Domain.fs" />
-    <Compile Include="PlayQueue.fs" />
     <Compile Include="Vote.fs" />
     <Compile Include="API.fs" />
+    <Compile Include="ExportAPI.fs" />
     <Compile Include="Program.fs" />
     <Content Include="packages.config" />
     <None Include="slack_resp.json" />
