@@ -6,6 +6,7 @@ open Engine.API
 open Engine.ExportAPI
 open System.Threading
 open System
+open FSharp.Data
 
 [<EntryPoint>]
 let main argv = 
@@ -29,7 +30,10 @@ let main argv =
                 )
 
         incr counter
-        System.Threading.Thread.Sleep(30000)
+
+        "http://localhost:5000/session/keepalive" |> Http.RequestString |> ignore
+
+        System.Threading.Thread.Sleep(60000)
 
     System.Console.Read() |> ignore
     printfn "%A" argv

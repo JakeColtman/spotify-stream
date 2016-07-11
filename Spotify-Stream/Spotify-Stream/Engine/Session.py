@@ -1,34 +1,28 @@
-import spotipy
-import spotipy.util as util
-import json
-from datetime import datetime
 from Engine.Exploration import Proposer
 from Engine.Chooser import Chooser
+from Engine.Playlist import Playlist
+
 
 class Session:
-
-    def __init__(self, proposer = Proposer(), chooser = Chooser()):
+    def __init__(self, proposer=Proposer(), chooser=Chooser(), playlist=Playlist()):
         self.proposer = proposer
         self.chooser = chooser
-        with open("keys.json") as file_open:
-            keys = json.load(file_open)
-        scope = 'playlist-modify-public'
-        token = util.prompt_for_user_token(keys["username"], scope)
-        self.sp = spotipy.Spotify(auth=token)
-        self.playlist = self.sp.user_playlist_create("jakecoltman", "PartyTime - {0}".format(datetime.now().isoformat()))
-        self.id = self.playlist["id"]
+        self.playlist = playlist
 
     def add_based_from_song(self, track_id):
-        print("track_id")
         proposed_track_ids = self.proposer.propose_from_track(track_id)
         chosen_track_ids = self.chooser.choose(proposed_track_ids)
         chosen_track_ids = [track_id] + chosen_track_ids
-        print(chosen_track_ids)
-        results = self.sp.user_playlist_add_tracks("jakecoltman", self.id, chosen_track_ids)
+        self.playlist.add_tracks(chosen_track_ids)
+
+    def more_of_same(self):
+        track_id = self.playlist.last_track
+        self.add_based_from_song(track_id)
 
     def increase_tempo(self):
-        #self.chooser.change_target()
+        # self.chooser.change_target()
         print("temp increase")
+
     def decrease_tempo(self):
         print("temp decrease")
-        #self.chooser.change_target()
+        # self.chooser.change_target()
