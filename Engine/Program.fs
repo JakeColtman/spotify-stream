@@ -3,10 +3,12 @@
 open Engine.Vote
 open Engine.Music
 open Engine.API
+open Engine.PlayQueue
 
 [<EntryPoint>]
 let main argv = 
-    
+  
+
     let Jake : User = "U0KUC87A4"
     let user_weights : UserWeights = Map.empty.Add(Jake, 1.0)
 
@@ -14,7 +16,9 @@ let main argv =
     elections
         |> List.iter (fun x -> 
             let result = run_election x user_weights
-            printfn "%A" result
+            match result with 
+                | Success(entity , weight)-> playqueue.Post entity
+                | Rejection x -> ignore x
             )
 
     System.Console.Read() |> ignore
