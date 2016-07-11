@@ -22,7 +22,7 @@ class Session:
         print("track_id")
         proposed_track_ids = self.proposer.propose_from_track(track_id)
         chosen_track_ids = self.chooser.choose(proposed_track_ids)
-        chosen_track_ids += [track_id]
+        chosen_track_ids = [track_id] + chosen_track_ids
         print(chosen_track_ids)
         results = self.sp.user_playlist_add_tracks("jakecoltman", self.id, chosen_track_ids)
 
