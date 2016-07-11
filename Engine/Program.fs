@@ -23,13 +23,13 @@ let main argv =
             |> List.iter (fun x -> 
                 let result = run_election x user_weights
                 printfn "%A" result
-               // match result with 
-                 //   | Success(entity , weight)-> export entity
-                   // | Rejection x -> ignore x
+                match result with 
+                    | Success(entity , weight)-> export entity
+                    | Rejection x -> ignore x
                 )
 
         incr counter
-        System.Threading.Thread.Sleep(6000)
+        System.Threading.Thread.Sleep(30000)
 
     System.Console.Read() |> ignore
     printfn "%A" argv

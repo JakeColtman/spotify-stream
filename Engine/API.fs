@@ -114,10 +114,21 @@ module API =
                     |> Engine.Vote.new_election ent
                     |> Some
             | None -> None
-                
+     
     let is_message_finished_election (message : SlackHistory.Message) = 
         message.Reactions
             |> Array.exists (fun x -> x.Name = "new_moon")
+                
+    let mark_all_elections_finished (messages) = 
+        messages
+            |> List.ofArray
+            |> List.filter (fun x -> not( is_message_finished_election x))
+            |> List.iter(fun x -> 
+                            printfn "%A" x.Ts
+                            let url = String.Format("https://slack.com/api/reactions.add?token={0}&channel=C1QG4RGNM&name=new_moon&timestamp={1}&pretty=1", System.Environment.GetEnvironmentVariable("SLACK_KEY"), x.Ts.ToString()) 
+                            Http.RequestString(url) |> printfn "%A"
+            )
+
 
     let get_active_elections (input) =
         printfn "%A" input 
@@ -125,6 +136,8 @@ module API =
         let url_string = @"https://slack.com/api/channels.history?token={0}&channel=C1QG4RGNM&pretty=1"
         let resp = Http.RequestString(String.Format(url_string, token))
         let parsed = SlackHistory.Parse(resp)
+
+        mark_all_elections_finished parsed.Messages
 
         parsed.Messages
             |> List.ofArray
