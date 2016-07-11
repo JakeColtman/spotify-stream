@@ -111,6 +111,9 @@ module API =
                     |> Some
             | None -> None
                 
+    let is_message_finished_election (message : SlackHistory.Message) = 
+        message.Reactions
+            |> Array.exists (fun x -> x.Name = "new_moon")
 
     let get_active_elections = 
         let token = System.Environment.GetEnvironmentVariable("SLACK_KEY")
@@ -118,8 +121,8 @@ module API =
         let resp = Http.RequestString(String.Format(url_string, token))
         let parsed = SlackHistory.Parse(resp)
 
-
-
         parsed.Messages
             |> List.ofArray
+            |> List.filter (fun x -> not( is_message_finished_election x))
             |> List.map parse_message_to_election
+            |> List.choose id

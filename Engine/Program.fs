@@ -13,11 +13,8 @@ let main argv =
     let elections = get_active_elections
     elections
         |> List.iter (fun x -> 
-            match x with 
-                | Some els -> 
-                    let result = run_election els user_weights
-                    printfn "%A" result
-                | None -> printfn "%A" "Not an election"
+            let result = run_election x user_weights
+            printfn "%A" result
             )
 
     System.Console.Read() |> ignore
