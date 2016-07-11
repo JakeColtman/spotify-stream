@@ -6,6 +6,11 @@ module Music =
     type Artist = string
     type Album = string
 
+    type MusicEntity = 
+        | Song of Song
+        | Artist of Artist
+        | Album of Album
+
 module Requests = 
 
     type SpecificRequest = 

@@ -1,6 +1,7 @@
 ﻿// Learn more about F# at http://fsharp.org
 // See the 'F# Tutorial' project for more help.
 open Engine.Vote
+open Engine.Music
 
 [<EntryPoint>]
 let main argv = 
@@ -10,7 +11,9 @@ let main argv =
     
     let jake_vote = Jake, Engine.Vote.Opposed
 
-    printfn "%A" (execute_election user_weights [jake_vote])
+    let election = {candidate = Song "Jakes song"; votes = [jake_vote]}
+
+    printfn "%A" (execute_election election user_weights)
 
     System.Console.Read() |> ignore
     printfn "%A" argv

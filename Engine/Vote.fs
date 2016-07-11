@@ -1,4 +1,5 @@
 ﻿namespace Engine
+open Engine.Music
 
 module Vote = 
 
@@ -12,9 +13,18 @@ module Vote =
 
     type Vote = User * VoteDirection
 
-    let execute_election (weights: UserWeights) (votes : List<Vote>) = 
+    type Election = {
+        candidate: MusicEntity;
+        votes: List<Vote>
+    }
+
+    type ElectionResult = 
+        | Success of MusicEntity
+        | Rejection
+
+    let execute_election (election: Election) (weights : UserWeights) = 
         let summation = 
-            votes
+            election.votes
             |> List.map (fun (x : Vote) -> 
                 match x with
                     | user, InFavour -> weights.[user]
@@ -27,4 +37,4 @@ module Vote =
                 | i when i <= 0.0 -> Opposed
                 | _ -> InFavour
 
-        result
+        Success election.candidate
