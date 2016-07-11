@@ -13,22 +13,22 @@ module Vote =
 
     type Vote = User * VoteDirection
 
+    type ElectionResult = 
+        | Success of MusicEntity * UserWeights
+        | Rejection of UserWeights
+
     type Election = {
         candidate: MusicEntity;
         votes: List<Vote>
     }
 
-    type ElectionResult = 
-        | Success of MusicEntity
-        | Rejection
-
-    let create_election (entity :Engine.Music.MusicEntity) = 
+    let new_election (entity :Engine.Music.MusicEntity) = 
         {candidate = entity; votes = []}
 
     let vote_in_election (election: Election) (vote: Vote) = 
         {election with votes = vote::election.votes}
 
-    let execute_election (election: Election) (weights : UserWeights) = 
+    let election_result (election: Election) (weights : UserWeights) = 
         let summation = 
             election.votes
             |> List.map (fun (x : Vote) -> 
@@ -38,9 +38,15 @@ module Vote =
                 )
             |> List.reduce (fun x y -> x + y)
 
-        let result =
-             match summation with 
-                | i when i <= 0.0 -> Opposed
-                | _ -> InFavour
 
-        Success election.candidate
+        match summation with 
+            | i when i <= 0.0 -> Rejection weights
+            | _ -> Success (election.candidate, weights)
+
+
+    let run_election (entity : MusicEntity) (votes : List<Vote>) (weights : UserWeights) = 
+        let election = 
+            new_election entity
+                |> (fun x -> {x with votes = votes})
+
+        election_result election weights

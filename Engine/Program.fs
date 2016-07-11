@@ -11,9 +11,9 @@ let main argv =
     
     let jake_vote = Jake, Engine.Vote.Opposed
 
-    let election = {candidate = Song "Jakes song"; votes = [jake_vote]}
+    let result = run_election (Song "Jake Song") [jake_vote] user_weights
 
-    printfn "%A" (execute_election election user_weights)
+    printfn "%A" result
 
     System.Console.Read() |> ignore
     printfn "%A" argv
