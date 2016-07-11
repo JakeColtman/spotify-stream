@@ -51,11 +51,12 @@ module Vote =
                 )
             |> List.reduce (fun x y -> x + y)
 
+        let result = 
+            match summation with 
+                | i when i <= 0.0 -> Rejection new_weights
+                | _ -> Success (election.candidate, new_weights)
 
-        match summation with 
-            | i when i <= 0.0 -> Rejection new_weights
-            | _ -> Success (election.candidate, new_weights)
-
-
+        result
+        
     let run_election (election: Election) (weights : UserWeights) = 
         election_result election weights

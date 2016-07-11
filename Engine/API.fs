@@ -74,12 +74,13 @@ module API =
 
     let parse_to_entity message = 
         match message with 
-            | Prefix "Album" rest -> Some(Album "I'm an album")
-            | Prefix "Song" rest -> Some(Song "I'm a song")
-            | Prefix "Artist" rest -> Some(Artist "I'm an artist")
+            | Prefix "Album" rest -> Some(Album rest)
+            | Prefix "Song" rest -> Some(Song rest)
+            | Prefix "Artist" rest -> Some(Artist rest)
             | Prefix "Tempo" rest -> match rest with 
                                         | " increase" -> Some(Tempo Up)
                                         | " decrease" -> Some(Tempo Down)
+                                        | _ -> None
             | _ -> None
 
     let extract_votes (message : SlackHistory.Message) = 
@@ -118,7 +119,8 @@ module API =
         message.Reactions
             |> Array.exists (fun x -> x.Name = "new_moon")
 
-    let get_active_elections = 
+    let get_active_elections (input) =
+        printfn "%A" input 
         let token = System.Environment.GetEnvironmentVariable("SLACK_KEY")
         let url_string = @"https://slack.com/api/channels.history?token={0}&channel=C1QG4RGNM&pretty=1"
         let resp = Http.RequestString(String.Format(url_string, token))

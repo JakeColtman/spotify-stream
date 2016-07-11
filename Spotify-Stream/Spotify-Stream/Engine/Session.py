@@ -19,12 +19,15 @@ class Session:
         self.id = self.playlist["id"]
 
     def add_based_from_song(self, track_id):
+        print("track_id")
         proposed_track_ids = self.proposer.propose_from_track(track_id)
         chosen_track_ids = self.chooser.choose(proposed_track_ids)
+        print(chosen_track_ids)
         results = self.sp.user_playlist_add_tracks("jakecoltman", self.id, chosen_track_ids)
 
     def increase_tempo(self):
-        self.chooser.change_target()
-
+        #self.chooser.change_target()
+        print("temp increase")
     def decrease_tempo(self):
-        self.chooser.change_target()
+        print("temp decrease")
+        #self.chooser.change_target()
