@@ -4,6 +4,10 @@ module MusicSpace =
 
     type Tempo = float
     
+    type Period = 
+        | Early
+        | Late
+
     type Mood = float
 
     type KeyLetter = 
@@ -38,6 +42,10 @@ module MusicSpace =
         dispersion : Dispersion
     }
 
+    type MusicFilter = {
+        areas: MusicArea list
+    }
+
     let distance_tempo (first_point : MusicPosition) (second_point : MusicPosition) =  
         if (abs(first_point.tempo - second_point.tempo) < 1.0 )
             then Specific
@@ -63,6 +71,8 @@ module MusicSpace =
             then Medium
         else
             Wide
+
+
 
     let position_in_area (area : MusicArea) (point: MusicPosition) = 
         let distances =
@@ -91,4 +101,25 @@ module MusicSpace =
                 |> not
             | Wide -> true
 
+    let position_in_filter (filter: MusicFilter) (position: MusicPosition) = 
+        filter.areas
+            |> List.exists (fun x -> position_in_area x position)
 
+    let create_position (tempo: float) (key_letter: KeyLetter) (key_level: KeyLevel) (mood: Mood) = 
+        {
+            tempo = tempo;
+            mood = mood;
+            key= key_letter, key_level
+        }
+
+    let create_filter = 
+        {
+            areas = []
+        }
+
+    let add_position_to_filter filter position dispersion = 
+        let area = {
+            centre = position;
+            dispersion = dispersion
+        }
+        {filter with areas = area::filter.areas}
