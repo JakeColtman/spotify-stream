@@ -58,8 +58,12 @@
     <None Include="App.config" />
     <Compile Include="Domain.fs" />
     <Compile Include="Vote.fs" />
-    <Compile Include="API.fs" />
+    <Compile Include="ElectionAPI.fs" />
     <Compile Include="ExportAPI.fs" />
+    <Compile Include="MusicSpace.fs" />
+    <Compile Include="Spotfiy.fs" />
+    <Compile Include="Session.fs" />
+    <Compile Include="CommandAPI.fs" />
     <Compile Include="Program.fs" />
     <Content Include="packages.config" />
     <None Include="slack_resp.json" />
@@ -71,6 +75,14 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SpotifyAPI">
+      <HintPath>packages\SpotifyAPI-NET.2.10.1\lib\SpotifyAPI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

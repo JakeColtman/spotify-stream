@@ -2,13 +2,13 @@
 
 module MusicSpace = 
 
-    type Tempo = float
+    type Tempo = float32
     
     type Period = 
         | Early
         | Late
 
-    type Mood = float
+    type Mood = float32
 
     type KeyLetter = 
         | A
@@ -23,7 +23,7 @@ module MusicSpace =
         | Major 
         | Minor
 
-    type Key = KeyLetter * KeyLevel
+    type Key = int
 
     type MusicPosition = {
         tempo: Tempo;
@@ -37,79 +37,58 @@ module MusicSpace =
         | Medium
         | Wide
 
+    type Probability = float
+
+    type ProbabilityFunction = 
+        MusicPosition -> Probability
+
     type MusicArea = {
         centre : MusicPosition;
-        dispersion : Dispersion
+        prob_density_function : ProbabilityFunction
     }
 
     type MusicFilter = {
         areas: MusicArea list
     }
 
-    let distance_tempo (first_point : MusicPosition) (second_point : MusicPosition) =  
-        if (abs(first_point.tempo - second_point.tempo) < 1.0 )
-            then Specific
-        elif (abs(first_point.tempo - second_point.tempo) < 10.0 )
-            then Narrow
-        elif (abs(first_point.tempo - second_point.tempo) < 20.0 )
-            then Medium
-        else
-            Wide
-                
-    let distance_key (first_point : MusicPosition) (second_point : MusicPosition) =  
-        if first_point.key = second_point.key then Narrow
-        else Wide
+    let range_dispersion (dispersion: Dispersion) = 
+        match dispersion with 
+            | Specific -> 10
+            | Narrow -> 20
+            | Medium -> 50
+            | Wide -> 100
 
-    let distance_mood (first_point : MusicPosition) (second_point : MusicPosition) =  
-        //Holding function - to be filled out
-        // Realistically all the continuous variables will get parameterized
-        if (abs(first_point.mood - second_point.mood) < 1.0 )
-            then Specific
-        elif (abs(first_point.mood - second_point.mood) < 10.0 )
-            then Narrow
-        elif (abs(first_point.mood - second_point.mood) < 20.0 )
-            then Medium
-        else
-            Wide
+    let squared_difference (pos1: float32) (pos2: float32) = 
+        (pos1 - pos2) ** (float32 2.0)
 
+    let distance_between_points (first_point : MusicPosition) (second_point : MusicPosition) = 
+        let tempo_difference = squared_difference first_point.tempo second_point.tempo
+        let mood_difference = squared_difference first_point.mood second_point.mood
 
+        (mood_difference + tempo_difference) ** (float32 0.5)
 
-    let position_in_area (area : MusicArea) (point: MusicPosition) = 
-        let distances =
-            [
-                distance_mood; distance_tempo; distance_key
-            ]
-            |> List.map(fun x -> x area.centre point)
-
-        match area.dispersion with 
-            | Narrow -> 
-                List.exists (fun x -> match x with 
-                                        | Narrow -> false
-                                        | _ -> true) distances
-                |> not
-            | Specific -> 
-                List.exists (fun x -> match x with 
-                                        | Narrow -> false
-                                        | Specific -> false
-                                        | _ -> true) distances
-            | Medium -> 
-                List.exists (fun x -> match x with 
-                                        | Narrow -> false
-                                        | Specific -> false
-                                        | Medium -> false
-                                        | _ -> true) distances
-                |> not
-            | Wide -> true
+    let uniform_dispersion_probability_density (centre: MusicPosition) (dispersion: Dispersion) (point: MusicPosition) = 
+        let distance_from_centre = distance_between_points centre point
+        let area_range = range_dispersion dispersion
+        if (distance_from_centre < float32 area_range) then 1.0
+        else 0.0
 
     let position_in_filter (filter: MusicFilter) (position: MusicPosition) = 
-        filter.areas
-            |> List.exists (fun x -> position_in_area x position)
+        let prob_not_in = 
+            filter.areas
+                |> List.map(fun x -> 1.0 - x.prob_density_function position)
+                |> List.reduce (fun x y -> x * y)
 
-    let create_position (tempo: float) (key_letter: KeyLetter) (key_level: KeyLevel) (mood: Mood) = 
+        if 1.0 - prob_not_in > 0.5
+            then true
+        else
+            false 
+
+    let create_position (tempo: float32) (key: int) (mood: float32) = 
         {
             tempo = tempo;
             mood = mood;
-            key= key_letter, key_level
+            key= key
         }
 
     let create_filter = 
@@ -117,9 +96,11 @@ module MusicSpace =
             areas = []
         }
 
-    let add_position_to_filter filter position dispersion = 
-        let area = {
+    let create_uniform_dispersion_area (position: MusicPosition) (dispersion: Dispersion) = 
+        {
             centre = position;
-            dispersion = dispersion
+            prob_density_function = uniform_dispersion_probability_density position dispersion
         }
+
+    let add_area_to_filter filter area = 
         {filter with areas = area::filter.areas}

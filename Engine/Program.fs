@@ -7,34 +7,44 @@ open Engine.ExportAPI
 open System.Threading
 open System
 open FSharp.Data
+open Engine.Session
+open Engine.MusicSpace
+
+open Engine.Spotify
 
 [<EntryPoint>]
 let main argv = 
-  
 
-    let Jake : User = "U0KUC87A4"
-    let user_weights : UserWeights = Map.empty.Add(Jake, 1.0)
-
-    let counter = ref 0
-
-    while true do 
-         
-        (get_active_elections counter)
-            |> List.filter(fun x -> x.votes.Length > 0 )
-            |> List.iter (fun x -> 
-                let result = run_election x user_weights
+    let starting_song = Engine.Spotify.search_song_by_name "Knights of Cydonia"
+    printfn "%A" starting_song
+    let track = 
+        match starting_song with 
+            | Success result -> 
                 printfn "%A" result
-                match result with 
-                    | Success(entity , weight)-> export entity
-                    | Rejection x -> ignore x
-                )
+                match result with
+                    | Track track -> track
 
-        incr counter
+                         
+    let position = Engine.Spotify.get_audio_features track
+    let area = Engine.MusicSpace.create_uniform_dispersion_area  position Engine.MusicSpace.Dispersion.Medium
 
-        "http://localhost:5000/session/keepalive" |> Http.RequestString |> ignore
+    Session.Add (NewArea area)
 
-        System.Threading.Thread.Sleep(60000)
+    Session.Add (TrackSuggestion (position, track))
 
+    let rec new_recommendations previous_song = 
+        let new_tracks = Engine.Spotify.generate_suggestions 1 previous_song
+ 
+        new_tracks
+            |> List.iter (fun new_t -> 
+                let position = Engine.Spotify.get_audio_features new_t
+                printfn "%A" position.key
+                Session.Add (TrackSuggestion (position, new_t))
+                System.Threading.Thread.Sleep(5000)
+            )
+            
+        new_recommendations new_tracks.[0]
+    new_recommendations track
     System.Console.Read() |> ignore
     printfn "%A" argv
-    0 // return an integer exit code
+    0 
