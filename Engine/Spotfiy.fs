@@ -4,7 +4,7 @@ module Spotify =
     
     let auth = SpotifyAPI.Web.Auth.AutorizationCodeAuth
     let spotify = new SpotifyAPI.Web.SpotifyWebAPI()
-    spotify.AccessToken <- "INSERT ACCESS TOKEN HERE"
+    spotify.AccessToken <- "ACCES_TOKEN"
     spotify.UseAuth <- true
     spotify.TokenType <- "Bearer"
 
@@ -17,6 +17,7 @@ module Spotify =
 
         | Track of Track
         | Artist of string
+        | TrackList of Track list
         | Playlist of string
 
     type Result = 
@@ -55,6 +56,11 @@ module Spotify =
         let suggestion_list = new System.Collections.Generic.List<string>()
         suggestion_list.Add(track.id) |> ignore
         let result = spotify.GetRecommendations(trackSeed = suggestion_list)
-        result.Tracks.GetRange(0,number)
-            |> Seq.map (fun x -> {id = x.Id; uri = x.Uri})
-            |> List.ofSeq
+        try
+            let tracks = 
+                result.Tracks.GetRange(0,number)
+                    |> Seq.map (fun x -> {id = x.Id; uri = x.Uri})
+                    |> List.ofSeq
+            Success (SpotifyContent.TrackList tracks)
+        with
+            _ -> Failure
